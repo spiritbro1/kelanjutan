@@ -1,73 +1,57 @@
-# 🏗 Solana App Scaffold
-Scaffolding for a dapp built on Solana
+# @pythnetwork/client
 
-# Quickstart
+## A library for reading on-chain Pyth oracle data
 
-```bash
-git clone https://github.com/pyth-network/pyth-examples.git
+[Pyth](https://pyth.network/) is building a way to deliver a decentralized, cross-chain market of verifiable data from high-quality nodes to any smart contract, anywhere.
 
-cd pyth-examples
-```
+This library reads on-chain Pyth data from [@solana/web3.js](https://www.npmjs.com/package/@solana/web3.js) and returns JavaScript-friendly objects.
 
-```bash
+See our [examples repo](https://github.com/pyth-network/pyth-examples) for real-world usage examples.
 
-yarn
+## Installation
 
-```
-
-```bash
-
-yarn start
+### npm
 
 ```
-
-# Environment Setup
-1. Install Rust from https://rustup.rs/
-2. Install Solana v1.6.7 or later from https://docs.solana.com/cli/install-solana-cli-tools#use-solanas-install-tool
-3. Install Node
-4. Install NPM, Yarn
-
-# Build Smart Contract (compiled for BPF)
-Run the following from the program/ subdirectory:
-
-```bash
-$ cargo build-bpf
-$ cargo test-bpf
+$ npm install --save @pythnetwork/client
 ```
-# Directory structure
 
-## program
+### Yarn
 
-Solana program template in Rust
+```
+$ yarn add @pythnetwork/client
+```
 
-### program/src/lib.rs
-* process_instruction function is used to run all calls issued to the smart contract
+## Example Usage
 
-## src/actions
+This library provides a subscription model for consuming price updates:
 
-Setup here actions that will interact with Solana programs using sendTransaction function
+```javascript
+const pythConnection = new PythConnection(solanaWeb3Connection, getPythProgramKeyForCluster(solanaClusterName))
+pythConnection.onPriceChange((product, price) => {
+  // sample output:
+  // SRM/USD: $8.68725 ±$0.0131
+  console.log(`${product.symbol}: $${price.price} \xB1$${price.confidence} Status: ${PriceStatus[price.status]}`)
+})
 
-## src/contexts
+// Start listening for price change events.
+pythConnection.start()
+```
 
-React context objects that are used propagate state of accounts across the application
+The `onPriceChange` callback will be invoked every time a Pyth price gets updated.
+This callback gets two arguments:
+* `price` contains the official Pyth price and confidence, along with the component prices that were combined to produce this result.
+* `product` contains metadata about the price feed, such as the symbol (e.g., "BTC/USD") and the number of decimal points.
 
-## src/hooks
+See `src/example_usage.ts` for a runnable example of the above usage.
+You can run this example with `npm run example`.
 
-Pyth hook
-* usePyth - hook for fetching products and prices
+You may also register to specific account updates using `connection.onAccountChange` in the solana web3 API, then
+use the methods in `index.ts` to parse the on-chain data structures into Javascript-friendly objects.
 
-Generic react hooks to interact with token program:
-* useUserBalance - query for balance of any user token by mint, returns:
-    - balance
-    - balanceLamports
-    - balanceInUSD
-* useUserTotalBalance - aggregates user balance across all token accounts and returns value in USD
-    - balanceInUSD
-* useAccountByMint
-* useTokenName
-* useUserAccounts
+## Releases
 
-## src/views
-
-* home - main page for your app
-* faucet - airdrops SOL on Testnet and Devnet
+In order to release a new version of this library and publish it to npm, follow these steps: 
+1. Update `CHANGELOG.md` with a description of the changes in this version.
+2. Run `npm version <new version number>`. This command will update the version of the package, tag the branch in git, and push your changes to github.
+3. Once your change is merged into `main`, create a release, and a github action will automatically publish a new version of the package to npm.
