@@ -15,8 +15,21 @@
 //   const size = data.readUInt32LE(12)
 //   console.log({ magic, version, type, size })
 const fs=require("fs")
-const data = fs.readFileSync('all.json',
-            {encoding:'utf8', flag:'r'});
- 
+const data = fs.readFileSync('all.json');
+ const ok=JSON.parse(data)
+ let strimo=``
+//  for(const a of ok){
+// strimo+=`WHEN acc = "${a.product}" THEN "${a.symbol}"\n`
+//  }
+//  let price=``
+//  for(const a of ok){
+//     price+=`WHEN acc = "${a.product}" THEN "${a.price}"\n`
+//      }
+let price=``
+     for(const a of ok){
+        price+=`WHEN acc = "${a.product}" THEN ${JSON.stringify(a.publisher).replace("[","array(").replace("]",")")}\n`
+         }
+ fs.writeFileSync("publisher.txt",
+price);
 // Display the file data
-console.log(JSON.parse(data).length);
+// console.log(JSON.parse(data).length);

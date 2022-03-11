@@ -20,14 +20,15 @@ import * as fs from 'fs'
           // const price = result.productPrice
           // expect(price).toBeDefined()
 // console.log(result.productAll[0])
-// console.log("jeneng produke",result.prices[0][0].productAccountKey.toBase58())
+// console.log("jeneng produke",result.prices[0])
 // console.log("price e",result.prices[0][1])
 
 const selesai=result.prices.map((a:any)=>{
+  const symbol=a[2]
   const product=a[0].productAccountKey.toBase58()
   const price=a[1]
   const publisher=a[0].priceComponents.length>0?a[0].priceComponents.map((b:any)=>b.publisher.toBase58()):[];
-  return {product,price,publisher}
+  return {product,price,publisher,symbol}
 })
 fs.writeFileSync("all.json",
 JSON.stringify(selesai));

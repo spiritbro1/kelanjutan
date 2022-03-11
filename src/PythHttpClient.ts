@@ -81,7 +81,7 @@ export class PythHttpClient {
       // productAll.filter(a=>a.base58===priceData.productAccountKey.toBase58()).length>0?productAll.filter(a=>a.base58===priceData.productAccountKey.toBase58())[0].publisher=priceData.priceComponents:"";
       if (product) {
         productPrice.set(product.product.symbol, priceData)
-        prices.push([priceData,product.priceAccountKey.toBase58()])
+        prices.push([priceData,product.priceAccountKey.toBase58(),product.product.symbol])
       }
     })
 
